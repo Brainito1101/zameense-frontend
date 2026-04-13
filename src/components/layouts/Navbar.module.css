@@ -1,0 +1,14 @@
+.navbar{
+  width:100%;
+}
+
+.inner{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.logo{
+  font-weight:700;
+  font-size:20px;
+}

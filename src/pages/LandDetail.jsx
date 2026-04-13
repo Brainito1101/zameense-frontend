@@ -38,7 +38,7 @@ const LandDetail = () => {
     land.images?.[0]?.image
       ? land.images[0].image.startsWith("http")
         ? land.images[0].image
-        : `http://127.0.0.1:8000${land.images[0].image}`
+        : `https://zameense-backend.onrender.com/api/${land.images[0].image}`
       : "https://dummyimage.com/600x400/cccccc/000000&text=No+Image"
   }
   alt={land.title}

@@ -79,44 +79,36 @@ const SellLand = () => {
 
   const form = new FormData();
 
-  form.append("title", formData.full_name);
-  form.append("location", formData.location);
-  form.append("property_type", formData.land_type.toLowerCase());
-  form.append("price", Math.floor(formData.price));
-  form.append("area", formData.size);
-  form.append("description", formData.description);
+form.append("title", formData.full_name);
+form.append("location", formData.location);
+form.append("property_type", formData.land_type || ""); // ✅ FIX
+form.append("price", Math.floor(formData.price || 0));
+form.append("area", formData.size);
+form.append("description", formData.description);
 
-  if (formData.image) {
-    form.append("images", formData.image);
-  }
+if (formData.image) {
+  form.append("images", formData.image);
+}
 
-  try {
-    await API.post("lands/", form); // ✅ no auth needed
-    setSubmitted(true);
-  } catch (error) {
-    console.log("Error:", error.response?.data);
-    alert(
-      error.response?.data?.detail ||
-      JSON.stringify(error.response?.data) ||
-      "Error submitting land ❌"
-    );
-  }
-};
+try {
+  await API.post("/lands/", form, {
+    headers: {
+      "Content-Type": "multipart/form-data"
+    }
+  });
 
-  // 🎉 SUCCESS MESSAGE
-  if (submitted) {
-    return (
-      <div className="text-center py-20">
-        <h2 className="text-2xl font-bold text-green-600">
-          Thank you! 🎉
-        </h2>
-        <p className="mt-2 text-gray-600">
-          Your land will be reviewed within 24–48 hours.
-        </p>
-      </div>
-    );
-  }
+  setSubmitted(true);
+} catch (error) {
+  console.log("FULL ERROR:", error);
+  console.log("DATA:", error.response?.data);
+  console.log("STATUS:", error.response?.status);
 
+  alert(
+    error.response?.data?.detail ||
+    JSON.stringify(error.response?.data) ||
+    "Error submitting land ❌"
+  );
+}
   return (
     <div className="bg-gray-50 min-h-screen py-10 px-4">
 

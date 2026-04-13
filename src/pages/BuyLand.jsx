@@ -29,7 +29,7 @@ const BuyLand = () => {
 
   // 🚀 FETCH DATA
   useEffect(() => {
-    axios.get("http://127.0.0.1:8000/api/lands/")
+    axios.get(`${import.meta.env.VITE_API_URL}/lands/`)
       .then((res) => {
         setLands(res.data);
         setFilteredLands(res.data);
@@ -175,12 +175,12 @@ const BuyLand = () => {
 
             <img
   src={
-    item.images?.[0]?.image
-      ? item.images[0].image.startsWith("http")
-        ? item.images[0].image
-        : `http://127.0.0.1:8000${item.images[0].image}`
-      : "https://dummyimage.com/400x300/cccccc/000000&text=No+Image"
-  }
+  item.images?.[0]?.image
+    ? item.images[0].image.startsWith("http")
+      ? item.images[0].image
+      : `https://zameense-backend.onrender.com${item.images[0].image}`
+    : "https://dummyimage.com/400x300/cccccc/000000&text=No+Image"
+}
   alt={item.title}
   className="w-full h-56 object-cover"
   onError={(e) => {

@@ -1,5 +1,6 @@
 import React from "react";
 import { FaUserPlus, FaUpload, FaSearch, FaHandshake } from "react-icons/fa";
+import { FaCheckCircle } from "react-icons/fa";
 
 const steps = [
   {

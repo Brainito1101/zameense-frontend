@@ -91,7 +91,7 @@ const SellLand = () => {
   }
 
   try {
-    await API.post("/lands/", form, {
+    await API.post("lands/", form, {
       headers: {
         "Content-Type": "multipart/form-data"
       }

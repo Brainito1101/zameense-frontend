@@ -79,36 +79,37 @@ const SellLand = () => {
 
   const form = new FormData();
 
-form.append("title", formData.full_name);
-form.append("location", formData.location);
-form.append("property_type", formData.land_type || ""); // ✅ FIX
-form.append("price", Math.floor(formData.price || 0));
-form.append("area", formData.size);
-form.append("description", formData.description);
+  form.append("title", formData.full_name);
+  form.append("location", formData.location);
+  form.append("property_type", formData.land_type || "");
+  form.append("price", Math.floor(formData.price || 0));
+  form.append("area", formData.size);
+  form.append("description", formData.description);
 
-if (formData.image) {
-  form.append("images", formData.image);
-}
+  if (formData.image) {
+    form.append("images", formData.image);
+  }
 
-try {
-  await API.post("/lands/", form, {
-    headers: {
-      "Content-Type": "multipart/form-data"
-    }
-  });
+  try {
+    await API.post("/lands/", form, {
+      headers: {
+        "Content-Type": "multipart/form-data"
+      }
+    });
 
-  setSubmitted(true);
-} catch (error) {
-  console.log("FULL ERROR:", error);
-  console.log("DATA:", error.response?.data);
-  console.log("STATUS:", error.response?.status);
+    setSubmitted(true);
+  } catch (error) {
+    console.log("FULL ERROR:", error);
+    console.log("DATA:", error.response?.data);
+    console.log("STATUS:", error.response?.status);
 
-  alert(
-    error.response?.data?.detail ||
-    JSON.stringify(error.response?.data) ||
-    "Error submitting land ❌"
-  );
-}
+    alert(
+      error.response?.data?.detail ||
+      JSON.stringify(error.response?.data) ||
+      "Error submitting land ❌"
+    );
+  }
+};
   return (
     <div className="bg-gray-50 min-h-screen py-10 px-4">
 

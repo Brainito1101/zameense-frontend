@@ -71,68 +71,34 @@ const SellLand = () => {
 
   // 🚀 SUBMIT
   const handleSubmit = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    // honeypot
-    if (formData.website) return;
+  const formData = new FormData();
+  formData.append("title", title);
+  formData.append("location", location);
+  formData.append("area", area);
+  formData.append("property_type", propertyType);
+  formData.append("price", price);
+  formData.append("description", description);
+  formData.append("image", image);
 
-    const validationErrors = validate();
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
-      return;
-    }
-
-    const form = new FormData();
-
-    form.append("title", formData.full_name);
-    form.append("location", formData.location);
-    form.append("property_type", formData.land_type || "");
-    form.append("price", Math.floor(formData.price || 0));
-    form.append("area", formData.size);
-    form.append("description", formData.description);
-
-    if (formData.image) {
-      form.append("images", formData.image);
-    }
-
-    try {
-      await API.post("lands/", form, {
+  try {
+    const res = await axios.post(
+      "https://your-backend-url/api/lands/",  // ✅ USE HERE
+      formData,
+      {
         headers: {
-          "Content-Type": "multipart/form-data"
+          "Content-Type": "multipart/form-data",
         },
-        maxContentLength: Infinity,
-        maxBodyLength: Infinity
-      });
-
-      alert("Land submitted successfully ✅");
-      setSubmitted(true);
-
-      // optional redirect
-      // navigate("/");
-
-    } catch (error) {
-      console.log("FULL ERROR:", error);
-      console.log("DATA:", error.response?.data);
-
-      let message = "Error submitting land ❌";
-
-      if (error.response?.data) {
-        if (typeof error.response.data === "string") {
-          message = error.response.data;
-        } else if (error.response.data.detail) {
-          message = error.response.data.detail;
-        } else if (error.response.data.message) {
-          message = error.response.data.message;
-        } else {
-          message = JSON.stringify(error.response.data);
-        }
-      } else if (error.message) {
-        message = error.message;
       }
+    );
 
-      alert(message);
-    }
-  };
+    alert("Land Added Successfully ✅");
+  } catch (error) {
+    console.log(error);
+    alert("Error: " + error.response?.status);
+  }
+};
 
   return (
     <div className="bg-gray-50 min-h-screen py-10 px-4">

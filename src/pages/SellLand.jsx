@@ -4,7 +4,7 @@ import API from "../services/api";
 
 const SellLand = () => {
 
-  const navigate = useNavigate(); // ✅ FIXED (inside component)
+  const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     full_name: "",
@@ -34,31 +34,35 @@ const SellLand = () => {
     }
   };
 
-  // ✅ VALIDATION
+  // ✅ VALIDATION (NO SIZE LIMIT NOW)
   const validate = () => {
     let newErrors = {};
 
     if (!formData.full_name) newErrors.full_name = "Full name required";
-    if (!formData.phone.match(/^[0-9]{10}$/))
+
+    if (!formData.phone.match(/^[0-9]{10}$/)) {
       newErrors.phone = "Invalid phone number";
-    if (!formData.email.includes("@"))
+    }
+
+    if (!formData.email.includes("@")) {
       newErrors.email = "Invalid email";
+    }
+
     if (!formData.location) newErrors.location = "Location required";
+
     if (!formData.price) newErrors.price = "Price required";
-    
+
     if (formData.price) {
       const decimalPlaces = (formData.price.toString().split('.')[1] || '').length;
       if (decimalPlaces > 2) {
-        newErrors.price = "Price can have maximum 2 decimal places";
+        newErrors.price = "Max 2 decimal places allowed";
       }
     }
 
+    // ✅ ONLY TYPE CHECK (NO SIZE LIMIT)
     if (formData.image) {
       if (!["image/jpeg", "image/png"].includes(formData.image.type)) {
         newErrors.image = "Only JPG/PNG allowed";
-      }
-      if (formData.image.size > 20 * 1024 * 1024) {
-        newErrors.image = "Max size 20MB";
       }
     }
 
@@ -66,63 +70,70 @@ const SellLand = () => {
   };
 
   // 🚀 SUBMIT
- const handleSubmit = async (e) => {
-  e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  if (formData.website) return;
+    // honeypot
+    if (formData.website) return;
 
-  const validationErrors = validate();
-  if (Object.keys(validationErrors).length > 0) {
-    setErrors(validationErrors);
-    return;
-  }
-
-  const form = new FormData();
-
-  form.append("title", formData.full_name);
-  form.append("location", formData.location);
-  form.append("property_type", formData.land_type || "");
-  form.append("price", Math.floor(formData.price || 0));
-  form.append("area", formData.size);
-  form.append("description", formData.description);
-
-  if (formData.image) {
-    form.append("images", formData.image);
-  }
-
-  try {
-  await API.post("lands/", form, {
-    headers: {
-      "Content-Type": "multipart/form-data"
+    const validationErrors = validate();
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
     }
-  });
 
-  alert("Land submitted successfully ✅");
-  setSubmitted(true);
+    const form = new FormData();
 
-} catch (error) {
-  console.log("FULL ERROR:", error);
-  console.log("DATA:", error.response?.data);
-  console.log("STATUS:", error.response?.status);
+    form.append("title", formData.full_name);
+    form.append("location", formData.location);
+    form.append("property_type", formData.land_type || "");
+    form.append("price", Math.floor(formData.price || 0));
+    form.append("area", formData.size);
+    form.append("description", formData.description);
 
-  let message = "Error submitting land ❌";
-
-  if (error.response?.data) {
-    if (typeof error.response.data === "string") {
-      message = error.response.data;
-    } else if (error.response.data.detail) {
-      message = error.response.data.detail;
-    } else if (error.response.data.message) {
-      message = error.response.data.message;
-    } else {
-      message = JSON.stringify(error.response.data);
+    if (formData.image) {
+      form.append("images", formData.image);
     }
-  } else if (error.message) {
-    message = error.message;
-  }
 
-  alert(message);
-}
+    try {
+      await API.post("lands/", form, {
+        headers: {
+          "Content-Type": "multipart/form-data"
+        },
+        maxContentLength: Infinity,
+        maxBodyLength: Infinity
+      });
+
+      alert("Land submitted successfully ✅");
+      setSubmitted(true);
+
+      // optional redirect
+      // navigate("/");
+
+    } catch (error) {
+      console.log("FULL ERROR:", error);
+      console.log("DATA:", error.response?.data);
+
+      let message = "Error submitting land ❌";
+
+      if (error.response?.data) {
+        if (typeof error.response.data === "string") {
+          message = error.response.data;
+        } else if (error.response.data.detail) {
+          message = error.response.data.detail;
+        } else if (error.response.data.message) {
+          message = error.response.data.message;
+        } else {
+          message = JSON.stringify(error.response.data);
+        }
+      } else if (error.message) {
+        message = error.message;
+      }
+
+      alert(message);
+    }
+  };
+
   return (
     <div className="bg-gray-50 min-h-screen py-10 px-4">
 
@@ -171,7 +182,8 @@ const SellLand = () => {
             <option value="commercial">Commercial</option>
           </select>
 
-          <input type="number" name="price" placeholder="Price (e.g. 1,00,00,000)" 
+          <input type="number" name="price"
+            placeholder="Price (e.g. 10000000)"
             onChange={handleChange}
             className="w-full border p-3 rounded-lg" />
           <p className="text-red-500 text-sm">{errors.price}</p>
@@ -186,6 +198,7 @@ const SellLand = () => {
             className="w-full" />
           <p className="text-red-500 text-sm">{errors.image}</p>
 
+          {/* honeypot */}
           <input type="text" name="website"
             onChange={handleChange}
             className="hidden" />

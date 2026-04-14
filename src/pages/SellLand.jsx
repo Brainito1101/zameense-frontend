@@ -73,6 +73,8 @@ const SellLand = () => {
   const handleSubmit = async (e) => {
   e.preventDefault();
 
+  console.log("Submit clicked"); // ✅ debug
+
   const formData = new FormData();
   formData.append("title", title);
   formData.append("location", location);
@@ -83,16 +85,9 @@ const SellLand = () => {
   formData.append("image", image);
 
   try {
-    const res = await axios.post(
-      "https://your-backend-url/api/lands/",  // ✅ USE HERE
-      formData,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      }
-    );
+    const res = await API.post("lands/", formData); // ✅ FIXED
 
+    console.log(res.data);
     alert("Land Added Successfully ✅");
   } catch (error) {
     console.log(error);

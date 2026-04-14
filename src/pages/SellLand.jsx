@@ -57,8 +57,8 @@ const SellLand = () => {
       if (!["image/jpeg", "image/png"].includes(formData.image.type)) {
         newErrors.image = "Only JPG/PNG allowed";
       }
-      if (formData.image.size > 10 * 1024 * 1024) {
-        newErrors.image = "Max size 10MB";
+      if (formData.image.size > 20 * 1024 * 1024) {
+        newErrors.image = "Max size 20MB";
       }
     }
 
@@ -91,25 +91,38 @@ const SellLand = () => {
   }
 
   try {
-    await API.post("lands/", form, {
-      headers: {
-        "Content-Type": "multipart/form-data"
-      }
-    });
+  await API.post("lands/", form, {
+    headers: {
+      "Content-Type": "multipart/form-data"
+    }
+  });
 
-    setSubmitted(true);
-  } catch (error) {
-    console.log("FULL ERROR:", error);
-    console.log("DATA:", error.response?.data);
-    console.log("STATUS:", error.response?.status);
+  alert("Land submitted successfully ✅");
+  setSubmitted(true);
 
-    alert(
-      error.response?.data?.detail ||
-      JSON.stringify(error.response?.data) ||
-      "Error submitting land ❌"
-    );
+} catch (error) {
+  console.log("FULL ERROR:", error);
+  console.log("DATA:", error.response?.data);
+  console.log("STATUS:", error.response?.status);
+
+  let message = "Error submitting land ❌";
+
+  if (error.response?.data) {
+    if (typeof error.response.data === "string") {
+      message = error.response.data;
+    } else if (error.response.data.detail) {
+      message = error.response.data.detail;
+    } else if (error.response.data.message) {
+      message = error.response.data.message;
+    } else {
+      message = JSON.stringify(error.response.data);
+    }
+  } else if (error.message) {
+    message = error.message;
   }
-};
+
+  alert(message);
+}
   return (
     <div className="bg-gray-50 min-h-screen py-10 px-4">
 

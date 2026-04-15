@@ -24,21 +24,36 @@ const SellLand = () => {
   const [errors, setErrors] = useState({});
 
   // 🔄 HANDLE CHANGE (FIXED)
+const handleChange = (e) => {
+  const { name, value, files } = e.target;
+
+  if (files && files.length > 0) {
+    setFormData((prev) => ({
+      ...prev,
+      [name]: files[0],
+    }));
+  } else {
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  }
+};
   const handleSubmit = async (e) => {
   e.preventDefault();
 
   try {
     // 🟢 Create Land
     const landRes = await API.post("lands/", {
-      title: formData.full_name,
-      location: formData.location,
-      area: formData.size,
-      property_type: formData.land_type,
-      price: formData.price,
-      description: formData.description,
-      owner_name: formData.owner_name,
-      owner_phone: formData.owner_phone,
-    });
+  title: formData.full_name,
+  location: formData.location,
+  area: formData.size,
+  property_type: formData.land_type,
+  price: formData.price,
+  description: formData.description,
+  owner_name: formData.full_name,   // ✅ FIXED
+  owner_phone: formData.phone,      // ✅ FIXED
+});
 
     // 🟡 Upload Image
     if (formData.image) {
@@ -78,8 +93,7 @@ const SellLand = () => {
 
           <form onSubmit={handleSubmit} className="space-y-4">
 
-            <input name="full_name" placeholder="Full Name"
-              onChange={handleChange}
+            <input name="full_name" value={formData.full_name} onChange={handleChange}
               className="w-full border p-3 rounded-lg" />
 
             <input name="phone" placeholder="Phone Number"

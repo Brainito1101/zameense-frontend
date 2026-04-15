@@ -24,45 +24,44 @@ const SellLand = () => {
   const [errors, setErrors] = useState({});
 
   // 🔄 HANDLE CHANGE (FIXED)
-  const handleChange = (e) => {
-    const { name, value, files } = e.target;
-
-    if (files && files.length > 0) {
-      setFormData({ ...formData, [name]: files[0] });
-    } else {
-      setFormData({ ...formData, [name]: value });
-    }
-  };
-
-  // 🚀 SUBMIT (FIXED MAIN BUG)
   const handleSubmit = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    console.log("Submit clicked");
+  try {
+    // 🟢 Create Land
+    const landRes = await API.post("lands/", {
+      title: formData.full_name,
+      location: formData.location,
+      area: formData.size,
+      property_type: formData.land_type,
+      price: formData.price,
+      description: formData.description,
+      owner_name: formData.owner_name,
+      owner_phone: formData.owner_phone,
+    });
 
-    const data = new FormData();
+    // 🟡 Upload Image
+    if (formData.image) {
+      const imageData = new FormData();
 
-    data.append("title", formData.full_name);
-    data.append("location", formData.location);
-    data.append("area", formData.size);
-    data.append("property_type", formData.land_type);
-    data.append("price", formData.price);
-    data.append("description", formData.description);
-    data.append("image", formData.image);
+      imageData.append("land", landRes.data.id);
+      imageData.append("image", formData.image);
 
-    try {
-      const res = await API.post("lands/", data);
-
-      console.log(res.data);
-      alert("Land Added Successfully ✅");
-
-      navigate("/");
-    } catch (error) {
-      console.log(error);
-      alert("Error: " + error.response?.status);
+      await API.post("land-images/", imageData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
     }
-  };
 
+    alert("Land Added Successfully ✅");
+    navigate("/");
+
+  } catch (error) {
+    console.log("ERROR:", error.response?.data);
+    alert("Error: " + error.response?.status);
+  }
+};
   return (
     <>
       <Helmet>

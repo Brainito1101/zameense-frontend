@@ -53,8 +53,7 @@ const SellLand = () => {
         description: formData.description,
         owner_name: formData.full_name,
         owner_phone: formData.phone,
-        owner_whatsapp: formData.whatsapp, // ✅ ADDED
-        owner_email: formData.email,       // ✅ ADDED
+       
         
       });
       API.post("/lands/", formData)

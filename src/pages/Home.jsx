@@ -7,16 +7,15 @@ import HeroSection from "../sections/HeroSection";
 import FeaturedListings from "../sections/FeaturedListings";
 import FAQSection from "../sections/FAQSection";
 import Contact from "../sections/Contact";
+import { Helmet } from "react-helmet-async";
 
 const Home = () => {
   const [lands, setLands] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  // ✅ MOVE handleSearch INSIDE
   const handleSearch = (filters) => {
     const { location, land_type, price } = filters;
-
     navigate(`/buy-land?location=${location}&type=${land_type}&price=${price}`);
   };
 
@@ -36,16 +35,12 @@ const Home = () => {
 
   return (
     <>
+      <Helmet>
+        <title>Buy & Sell Land in Gujarat | Zameense</title>
+      </Helmet>
 
-    return (
-  <>
-    <Helmet>
-      <title>Buy & Sell Land in Gujarat | Zameense</title>
-    </Helmet>
 
-    <div>Home Content</div>
-  </>
-);
+
       {/* ✅ PASS onSearch HERE */}
       <HeroSection onSearch={handleSearch} />
 
@@ -55,10 +50,12 @@ const Home = () => {
       ) : (
         <FeaturedListings lands={lands} loading={loading} />
       )}
-      <HowItWorksSection /> 
+
+      <HowItWorksSection />
       <FAQSection />
       <Contact />
 
+      {/* WhatsApp Button */}
       <a
         href="https://wa.me/919876543210?text=Hi%20Zameense%2C%20I%20need%20help%20finding%20land%20or%20selling%20property.%20Can%20you%20assist%20me%3F"
         target="_blank"

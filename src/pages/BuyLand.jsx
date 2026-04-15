@@ -1,7 +1,7 @@
 import { useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import API from "../services/api"; // ✅ FIXED: use API instance instead of axios
 
 const BuyLand = () => {
   const navigate = useNavigate();
@@ -11,7 +11,6 @@ const BuyLand = () => {
   const urlLocation = params.get("location") || "";
   const urlType = params.get("type") || "";
   const urlPrice = params.get("price") || "";
- 
 
   const [lands, setLands] = useState([]);
   const [filteredLands, setFilteredLands] = useState([]);
@@ -27,9 +26,9 @@ const BuyLand = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
 
-  // 🚀 FETCH DATA
+  // 🚀 FETCH DATA - ✅ FIXED: using API instance
   useEffect(() => {
-    axios.get(`${import.meta.env.VITE_API_URL}/lands/`)
+    API.get("lands/")
       .then((res) => {
         setLands(res.data);
         setFilteredLands(res.data);
@@ -46,7 +45,7 @@ const BuyLand = () => {
     let data = [...lands];
 
     if (location) {
-      data = data.filter(item =>
+      data = data.filter((item) =>
         item.location.toLowerCase().includes(location.toLowerCase())
       );
     }
@@ -165,75 +164,64 @@ const BuyLand = () => {
 
       {/* 🏡 GRID */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-
         {currentLands.map((item) => (
           <div
             key={item.id}
             onClick={() => navigate(`/land/${item.id}`)}
             className="cursor-pointer bg-white rounded-xl shadow hover:shadow-xl transition overflow-hidden"
           >
-
             <img
-  src={
-  item.images?.[0]?.image
-    ? item.images[0].image.startsWith("http")
-      ? item.images[0].image
-      : `https://zameense-backend.onrender.com${item.images[0].image}`
-    : "https://dummyimage.com/400x300/cccccc/000000&text=No+Image"
-}
-  alt={item.title}
-  className="w-full h-56 object-cover"
-  onError={(e) => {
-    e.target.src = "https://dummyimage.com/400x300/cccccc/000000&text=Error";
-  }}
-/>
+              src={
+                item.images?.[0]?.image
+                  ? item.images[0].image.startsWith("http")
+                    ? item.images[0].image
+                    : `https://zameense-backend.onrender.com${item.images[0].image}`
+                  : "https://dummyimage.com/400x300/cccccc/000000&text=No+Image"
+              }
+              alt={item.title}
+              className="w-full h-56 object-cover"
+              onError={(e) => {
+                e.target.src =
+                  "https://dummyimage.com/400x300/cccccc/000000&text=Error";
+              }}
+            />
+
             <div className="p-4 space-y-2">
-
               <h3 className="font-semibold text-lg">{item.title}</h3>
-
               <p className="text-gray-500 text-sm">📍 {item.location}</p>
-
-              <p className="text-green-700 font-bold">
-                ₹{item.price}
-              </p>
+              <p className="text-green-700 font-bold">₹{item.price}</p>
 
               <button
-  onClick={() => {
-    console.log("Clicked:", item.id); // debug
-    navigate(`/land/${item.id}`);
-  }}
-  className="w-full mt-3 bg-[#FF9933] text-white py-2 rounded-lg"
->
-  View Details
-</button>
+                onClick={(e) => {
+                  e.stopPropagation();
+                  navigate(`/land/${item.id}`);
+                }}
+                className="w-full mt-3 bg-[#FF9933] text-white py-2 rounded-lg"
+              >
+                View Details
+              </button>
             </div>
           </div>
         ))}
-
       </div>
 
       {/* 📄 PAGINATION */}
       {totalPages > 1 && (
         <div className="flex justify-center mt-10 gap-2 flex-wrap">
-
           {[...Array(totalPages)].map((_, i) => {
             const page = i + 1;
-
             return (
               <button
                 key={page}
                 onClick={() => handlePageChange(page)}
                 className={`px-4 py-2 border rounded-lg ${
-                  currentPage === page
-                    ? "bg-[#FF9933] text-white"
-                    : "bg-white"
+                  currentPage === page ? "bg-[#FF9933] text-white" : "bg-white"
                 }`}
               >
                 {page}
               </button>
             );
           })}
-
         </div>
       )}
 

@@ -4,7 +4,6 @@ import API from "../services/api";
 import { Helmet } from "react-helmet-async";
 
 const SellLand = () => {
-
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
@@ -18,134 +17,169 @@ const SellLand = () => {
     price: "",
     description: "",
     image: null,
-    website: ""
+    website: "",
   });
 
   const [errors, setErrors] = useState({});
 
-  // 🔄 HANDLE CHANGE (FIXED)
-const handleChange = (e) => {
-  const { name, value, files } = e.target;
+  // 🔄 HANDLE CHANGE
+  const handleChange = (e) => {
+    const { name, value, files } = e.target;
 
-  if (files && files.length > 0) {
-    setFormData((prev) => ({
-      ...prev,
-      [name]: files[0],
-    }));
-  } else {
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  }
-};
-  const handleSubmit = async (e) => {
-  e.preventDefault();
-
-  try {
-    // 🟢 Create Land
-    const landRes = await API.post("lands/", {
-  title: formData.full_name,
-  location: formData.location,
-  area: formData.size,
-  property_type: formData.land_type,
-  price: formData.price,
-  description: formData.description,
-  owner_name: formData.full_name,   // ✅ FIXED
-  owner_phone: formData.phone,      // ✅ FIXED
-});
-
-    // 🟡 Upload Image
-    if (formData.image) {
-      const imageData = new FormData();
-
-      imageData.append("land", landRes.data.id);
-      imageData.append("image", formData.image);
-
-      await API.post("land-images/", imageData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
+    if (files && files.length > 0) {
+      setFormData((prev) => ({
+        ...prev,
+        [name]: files[0],
+      }));
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
     }
+  };
 
-    alert("Land Added Successfully ✅");
-    navigate("/");
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  } catch (error) {
-    console.log("ERROR:", error.response?.data);
-    alert("Error: " + error.response?.status);
-  }
-};
+    try {
+      // 🟢 Create Land - ✅ FIXED: added owner_whatsapp
+      const landRes = await API.post("lands/", {
+        title: formData.full_name,
+        location: formData.location,
+        area: formData.size,
+        property_type: formData.land_type,
+        price: formData.price,
+        description: formData.description,
+        owner_name: formData.full_name,
+        owner_phone: formData.phone,
+        owner_whatsapp: formData.whatsapp, // ✅ ADDED
+        owner_email: formData.email,       // ✅ ADDED
+      });
+
+      // 🟡 Upload Image
+      if (formData.image) {
+        const imageData = new FormData();
+        imageData.append("land", landRes.data.id);
+        imageData.append("image", formData.image);
+
+        await API.post("land-images/", imageData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
+      }
+
+      alert("Land Added Successfully ✅");
+      navigate("/");
+    } catch (error) {
+      console.log("ERROR:", error.response?.data);
+      alert("Error: " + error.response?.status);
+    }
+  };
+
   return (
     <>
       <Helmet>
         <title>Sell Your Land | Zameense</title>
-        <meta name="description" content="Post your land for sale easily on Zameense." />
+        <meta
+          name="description"
+          content="Post your land for sale easily on Zameense."
+        />
       </Helmet>
 
       <div className="bg-gray-50 min-h-screen py-10 px-4">
         <div className="max-w-3xl mx-auto bg-white p-6 rounded-xl shadow">
-
           <h2 className="text-2xl font-bold mb-6 text-center">
             Sell Your Land
           </h2>
 
           <form onSubmit={handleSubmit} className="space-y-4">
 
-            <input name="full_name" value={formData.full_name} onChange={handleChange}
-              className="w-full border p-3 rounded-lg" />
-
-            <input name="phone" placeholder="Phone Number"
+            <input
+              name="full_name"
+              placeholder="Full Name"
+              value={formData.full_name}
               onChange={handleChange}
-              className="w-full border p-3 rounded-lg" />
+              className="w-full border p-3 rounded-lg"
+            />
 
-            <input name="whatsapp" placeholder="WhatsApp Number"
+            <input
+              name="phone"
+              placeholder="Phone Number"
               onChange={handleChange}
-              className="w-full border p-3 rounded-lg" />
+              className="w-full border p-3 rounded-lg"
+            />
 
-            <input name="email" placeholder="Email"
+            <input
+              name="whatsapp"
+              placeholder="WhatsApp Number"
               onChange={handleChange}
-              className="w-full border p-3 rounded-lg" />
+              className="w-full border p-3 rounded-lg"
+            />
 
-            <input name="location" placeholder="Location"
+            <input
+              name="email"
+              placeholder="Email"
               onChange={handleChange}
-              className="w-full border p-3 rounded-lg" />
+              className="w-full border p-3 rounded-lg"
+            />
 
-            <input name="size" placeholder="Land Size"
+            <input
+              name="location"
+              placeholder="Location"
               onChange={handleChange}
-              className="w-full border p-3 rounded-lg" />
+              className="w-full border p-3 rounded-lg"
+            />
 
-            <select name="land_type"
+            <input
+              name="size"
+              placeholder="Land Size"
               onChange={handleChange}
-              className="w-full border p-3 rounded-lg">
+              className="w-full border p-3 rounded-lg"
+            />
+
+            <select
+              name="land_type"
+              onChange={handleChange}
+              className="w-full border p-3 rounded-lg"
+            >
               <option value="">Select Land Type</option>
               <option value="agricultural">Agricultural</option>
               <option value="residential">Residential</option>
               <option value="commercial">Commercial</option>
             </select>
 
-            <input type="number" name="price"
+            <input
+              type="number"
+              name="price"
               placeholder="Price"
               onChange={handleChange}
-              className="w-full border p-3 rounded-lg" />
+              className="w-full border p-3 rounded-lg"
+            />
 
-            <textarea name="description"
+            <textarea
+              name="description"
               placeholder="Description"
               onChange={handleChange}
-              className="w-full border p-3 rounded-lg" />
+              className="w-full border p-3 rounded-lg"
+            />
 
-            <input type="file" name="image"
+            <input
+              type="file"
+              name="image"
               onChange={handleChange}
-              className="w-full" />
+              className="w-full"
+            />
 
-            <button type="submit"
-              className="w-full bg-[#FF9933] hover:bg-[#E67300] text-white py-3 rounded-lg font-semibold">
+            <button
+              type="submit"
+              className="w-full bg-[#FF9933] hover:bg-[#E67300] text-white py-3 rounded-lg font-semibold"
+            >
               Submit Land
             </button>
 
           </form>
-
         </div>
       </div>
     </>

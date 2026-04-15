@@ -42,11 +42,8 @@ const LandDetail = () => {
       {/* ✅ SEO */}
       <Helmet>
         <title>
-          {land.title
-            ? `${land.title} | Zameense`
-            : "Land Details | Zameense"}
+          {land.title ? `${land.title} | Zameense` : "Land Details | Zameense"}
         </title>
-
         <meta
           name="description"
           content={
@@ -78,9 +75,7 @@ const LandDetail = () => {
 
       {/* ✅ CONTACT OWNER */}
       <div className="mt-8 rounded-3xl border border-green-200 bg-white p-6 shadow-sm">
-        <h2 className="text-2xl font-semibold mb-3">
-          Contact the Owner
-        </h2>
+        <h2 className="text-2xl font-semibold mb-3">Contact the Owner</h2>
 
         <p className="text-gray-700 mb-4">
           {land.owner_name
@@ -111,9 +106,7 @@ const LandDetail = () => {
             </a>
           </div>
         ) : (
-          <p className="text-gray-600">
-            Owner phone number is not available.
-          </p>
+          <p className="text-gray-600">Owner phone number is not available.</p>
         )}
       </div>
 
@@ -125,10 +118,7 @@ const LandDetail = () => {
 
       {/* ✅ MAP */}
       <div className="mt-6">
-        <h3 className="font-semibold text-lg mb-2">
-          📍 Location Map
-        </h3>
-
+        <h3 className="font-semibold text-lg mb-2">📍 Location Map</h3>
         <iframe
           title="map"
           src={`https://www.google.com/maps?q=${land.location}&output=embed`}

@@ -36,6 +36,16 @@ const Home = () => {
 
   return (
     <>
+
+    return (
+  <>
+    <Helmet>
+      <title>Buy & Sell Land in Gujarat | Zameense</title>
+    </Helmet>
+
+    <div>Home Content</div>
+  </>
+);
       {/* ✅ PASS onSearch HERE */}
       <HeroSection onSearch={handleSearch} />
 

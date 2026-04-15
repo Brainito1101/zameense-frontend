@@ -26,6 +26,26 @@ const LandDetail = () => {
   const hasPhone = whatsappNumber.length > 0;
 
   return (
+    <div>
+
+      {/* ✅ ADD HERE */}
+      <Helmet>
+  <title>
+    {land?.title ? `${land.title} | Zameense` : "Land Details | Zameense"}
+  </title>
+
+  <meta
+    name="description"
+    content={
+      land?.description
+        ? land.description.slice(0, 150)
+        : "View land details, price, location and contact owner."
+    }
+  />
+</Helmet>
+    </div>
+      {/* Your UI */}
+    
     <div className="max-w-5xl mx-auto p-6">
 
       {/* TITLE */}

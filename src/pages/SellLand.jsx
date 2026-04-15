@@ -55,7 +55,15 @@ const SellLand = () => {
         owner_phone: formData.phone,
         owner_whatsapp: formData.whatsapp, // ✅ ADDED
         owner_email: formData.email,       // ✅ ADDED
+        
       });
+      API.post("/lands/", formData)
+  .then((res) => {
+    console.log(res.data);
+  })
+  .catch((err) => {
+    console.log(err.response.data); // 🔥 IMPORTANT
+  });
 
       // 🟡 Upload Image
       if (formData.image) {

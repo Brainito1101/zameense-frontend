@@ -81,7 +81,7 @@ const SellLand = () => {
       // 🟡 Upload Image
       if (formData.image) {
         const imageData = new FormData();
-        imageData.append("land", landRes.data.id);
+        imageData.append("land", parseInt(landRes.data.id));
         imageData.append("image", formData.image);
 
         await API.post("land-images/", imageData, {

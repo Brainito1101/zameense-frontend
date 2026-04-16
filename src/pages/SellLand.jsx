@@ -17,27 +17,21 @@ const SellLand = () => {
     price: "",
     description: "",
     image: null,
-    website: "",
   });
 
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
 
-  // 🔄 HANDLE CHANGE
   const handleChange = (e) => {
     const { name, value, files } = e.target;
-
     if (files && files.length > 0) {
       setFormData((prev) => ({ ...prev, [name]: files[0] }));
     } else {
       setFormData((prev) => ({ ...prev, [name]: value }));
     }
-
-    // Clear error on change
     setErrors((prev) => ({ ...prev, [name]: "" }));
   };
 
-  // ✅ VALIDATE
   const validate = () => {
     const newErrors = {};
     if (!formData.full_name.trim()) newErrors.full_name = "Full name is required";
@@ -54,7 +48,6 @@ const SellLand = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // ✅ Validate before submit
     const validationErrors = validate();
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
@@ -64,30 +57,24 @@ const SellLand = () => {
     setLoading(true);
 
     try {
-      // 🟢 Create Land
-      const landRes = await API.post("lands/", {
-        title: formData.full_name,
-        location: formData.location,
-        area: formData.size,
-        property_type: formData.land_type,
-        price: formData.price,
-        description: formData.description,
-        owner_name: formData.full_name,
-        owner_phone: formData.phone,
-        owner_whatsapp: formData.whatsapp,
-        owner_email: formData.email,
-      });
+      // ✅ Send everything in ONE FormData request (backend handles image)
+      const formPayload = new FormData();
+      formPayload.append("title", formData.full_name);
+      formPayload.append("location", formData.location);
+      formPayload.append("area", formData.size);
+      formPayload.append("property_type", formData.land_type);
+      formPayload.append("price", formData.price);
+      formPayload.append("description", formData.description);
+      formPayload.append("owner_name", formData.full_name);
+      formPayload.append("owner_phone", formData.phone);
 
-      // 🟡 Upload Image
       if (formData.image) {
-  const landId = parseInt(landRes.data.id); // ✅ get as integer
-  const imageData = new FormData();
-  imageData.append("image", formData.image); // ✅ only image in FormData
+        formPayload.append("image", formData.image); // ✅ backend reads this
+      }
 
-  await API.post(`land-images/?land=${landId}`, imageData, { // ✅ land in URL
-    headers: { "Content-Type": "multipart/form-data" },
-  });
-}
+      await API.post("lands/", formPayload, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
 
       alert("Land Added Successfully ✅");
       navigate("/");
@@ -112,7 +99,6 @@ const SellLand = () => {
 
           <form onSubmit={handleSubmit} className="space-y-4">
 
-            {/* Full Name */}
             <div>
               <input
                 name="full_name"
@@ -124,7 +110,6 @@ const SellLand = () => {
               {errors.full_name && <p className="text-red-500 text-sm mt-1">{errors.full_name}</p>}
             </div>
 
-            {/* Phone */}
             <div>
               <input
                 name="phone"
@@ -136,7 +121,6 @@ const SellLand = () => {
               {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone}</p>}
             </div>
 
-            {/* WhatsApp */}
             <div>
               <input
                 name="whatsapp"
@@ -147,7 +131,6 @@ const SellLand = () => {
               />
             </div>
 
-            {/* Email */}
             <div>
               <input
                 name="email"
@@ -159,7 +142,6 @@ const SellLand = () => {
               {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
             </div>
 
-            {/* Location */}
             <div>
               <input
                 name="location"
@@ -171,7 +153,6 @@ const SellLand = () => {
               {errors.location && <p className="text-red-500 text-sm mt-1">{errors.location}</p>}
             </div>
 
-            {/* Size */}
             <div>
               <input
                 name="size"
@@ -183,7 +164,6 @@ const SellLand = () => {
               {errors.size && <p className="text-red-500 text-sm mt-1">{errors.size}</p>}
             </div>
 
-            {/* Land Type */}
             <div>
               <select
                 name="land_type"
@@ -199,7 +179,6 @@ const SellLand = () => {
               {errors.land_type && <p className="text-red-500 text-sm mt-1">{errors.land_type}</p>}
             </div>
 
-            {/* Price */}
             <div>
               <input
                 type="number"
@@ -212,7 +191,6 @@ const SellLand = () => {
               {errors.price && <p className="text-red-500 text-sm mt-1">{errors.price}</p>}
             </div>
 
-            {/* Description */}
             <div>
               <textarea
                 name="description"
@@ -225,7 +203,6 @@ const SellLand = () => {
               {errors.description && <p className="text-red-500 text-sm mt-1">{errors.description}</p>}
             </div>
 
-            {/* Image */}
             <input
               type="file"
               name="image"

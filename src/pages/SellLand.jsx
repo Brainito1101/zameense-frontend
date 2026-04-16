@@ -68,7 +68,7 @@ const SellLand = () => {
       formPayload.append("owner_name", formData.full_name);
       formPayload.append("owner_phone", formData.phone);
 
-      if (formData.image) {
+      if (formData.image) {push
         formPayload.append("image", formData.image); // ✅ backend reads this
       }
 

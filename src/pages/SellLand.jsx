@@ -80,14 +80,14 @@ const SellLand = () => {
 
       // 🟡 Upload Image
       if (formData.image) {
-        const imageData = new FormData();
-        imageData.append("land", parseInt(landRes.data.id));
-        imageData.append("image", formData.image);
+  const landId = parseInt(landRes.data.id); // ✅ get as integer
+  const imageData = new FormData();
+  imageData.append("image", formData.image); // ✅ only image in FormData
 
-        await API.post("land-images/", imageData, {
-          headers: { "Content-Type": "multipart/form-data" },
-        });
-      }
+  await API.post(`land-images/?land=${landId}`, imageData, { // ✅ land in URL
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+}
 
       alert("Land Added Successfully ✅");
       navigate("/");
